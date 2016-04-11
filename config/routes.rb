@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   root "greetings#index"
 
   resources :greetings, only: [:index]
+
+  get :token, to: "application#token"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
