@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  before_filter :authenticate_user_from_token, except: [:token]
+
   include ActionController::HttpAuthentication::Basic::ControllerMethods
   include ActionController::HttpAuthentication::Token::ControllerMethods
 
@@ -14,6 +16,14 @@ class ApplicationController < ActionController::Base
       else
         render json: { error: 'Incorrect credentials' }, status: 401
       end
+    end
+  end
+
+  private
+
+  def authenticate_user_from_token
+    unless authenticate_with_http_token { |token, options| User.find_by(auth_token: token) }
+      render json: { error: 'Bad Token'}, status: 401
     end
   end
 end
